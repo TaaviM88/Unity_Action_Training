@@ -35,7 +35,16 @@ jobs:
           targetPlatform: StandaloneWindows64
           buildName: CI-Windows
           buildsPath: build
-
+      - name: Debug build output
+        run: |
+          echo "Repo root:"
+          ls -la
+          echo "Project folder:"
+          ls -la "Action Test" || true
+          echo "Build folder candidates:"
+          ls -la build || true
+          ls -la "Action Test/build" || true
+          find . -maxdepth 4 -type d -name "StandaloneWindows64" -print || true
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
