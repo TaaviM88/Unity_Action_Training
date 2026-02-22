@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bff84f18e4df1b449a840bcad878b088, type: 3}
+  m_Name: SoundLibrary_
+  m_EditorClassIdentifier: Assembly-CSharp::SoundLibrarySO
+  sfxGroup: {fileID: -6861804014666594971, guid: 360574dbd05d23e4e9240a02d1f125e4, type: 2}
+  musicGroup: {fileID: 5766635462413394326, guid: 360574dbd05d23e4e9240a02d1f125e4, type: 2}
+  uiGroup: {fileID: 4084807015242004797, guid: 360574dbd05d23e4e9240a02d1f125e4, type: 2}
+  rifleShot:
+    clips:
+    - {fileID: 8300000, guid: 2c71374916b02d241b02ea70809bca5a, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+  rifleBolt:
+    clips:
+    - {fileID: 8300000, guid: 8571cf42fff788745b5129caeeddb9dd, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+  rifleReload:
+    clips:
+    - {fileID: 8300000, guid: a236ed6ed1165ca44908f0cfe8c7ed65, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+  enemyHurt:
+    clips:
+    - {fileID: 8300000, guid: c3de6481d95b73c4b8c9f511c67b896d, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+  enemyDeath:
+    clips:
+    - {fileID: 8300000, guid: 2ad8f419de8272446a3bb717cdfc1265, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+  footstep:
+    clips:
+    - {fileID: 8300000, guid: 529cf2d9a1b7c62408d3901f6cb0a8ce, type: 3}
+    volume: 0.195
+    pitchMin: 0.83
+    pitchMax: 1.132
+  musicTracks:
+  - {fileID: 8300000, guid: e0a6287022ca47e4d85d0952e9a6029d, type: 3}
