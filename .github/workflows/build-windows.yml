@@ -9,7 +9,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-# Needed so the workflow can create a GitHub Release
 permissions:
   contents: write
 
@@ -21,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed to generate changelogs between tags
 
       - name: Cache Library
         uses: actions/cache@v4
@@ -43,25 +44,66 @@ jobs:
           buildName: CI-Windows
           buildsPath: build
 
-      # Always upload artifact to the Actions run (handy even for branch builds)
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: WindowsBuild
           path: build/StandaloneWindows64
 
-      # Only on tag builds (v*): zip the build folder
       - name: Zip Windows build
-        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           cd build/StandaloneWindows64
-          zip -r ../../WindowsBuild-${{ github.ref_name }}.zip .
+          zip -r ../../WindowsBuild.zip .
           cd ../..
 
-      # Only on tag builds (v*): create GitHub Release and upload the zip
-      - name: Create GitHub Release
+      # -----------------------------
+      # 1) TAGGED RELEASES (v*)
+      # -----------------------------
+
+      - name: Create changelog for this tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          # Find previous tag (if any) and generate a simple changelog
+          PREV_TAG=$(git tag --sort=-creatordate | grep '^v' | grep -v "^${GITHUB_REF_NAME}$" | head -n 1 || true)
+          echo "Previous tag: $PREV_TAG"
+          echo "## Changes" > RELEASE_BODY.md
+          if [ -n "$PREV_TAG" ]; then
+            git log --pretty=format:"- %s (%h)" "$PREV_TAG..${GITHUB_REF_NAME}" >> RELEASE_BODY.md
+          else
+            git log --pretty=format:"- %s (%h)" "${GITHUB_REF_NAME}" >> RELEASE_BODY.md
+          fi
+          echo "" >> RELEASE_BODY.md
+          echo "## Build" >> RELEASE_BODY.md
+          echo "- Unity: 6.3.1f1" >> RELEASE_BODY.md
+          echo "- Target: StandaloneWindows64" >> RELEASE_BODY.md
+
+      - name: Release (tagged)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: WindowsBuild-${{ github.ref_name }}.zip
+          files: WindowsBuild.zip
+          # GitHub auto-generates notes from commits/PRs. We'll ALSO add our own body.
           generate_release_notes: true
+          body_path: RELEASE_BODY.md
+          # If tag name contains "-rc" or "-beta" or "-alpha", mark as prerelease
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
+
+      # -----------------------------
+      # 2) NIGHTLY PRERELEASE (no tags)
+      # -----------------------------
+
+      - name: Release (nightly on main)
+        if: github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: Nightly (build ${{ github.run_number }})
+          prerelease: true
+          files: WindowsBuild.zip
+          body: |
+            Automated nightly build from main.
+
+            - Run: ${{ github.run_number }}
+            - Commit: ${{ github.sha }}
+            - Unity: 6.3.1f1
+            - Target: StandaloneWindows64
