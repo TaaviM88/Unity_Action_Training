@@ -18,8 +18,8 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-${{ runner.os }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          path: "Action Test/Library"
+          key: Library-${{ runner.os }}-${{ hashFiles('Action Test/Assets/**', ' Action Test/Packages/**', 'Action Test/ProjectSettings/**') }}
           restore-keys: |
             Library-${{ runner.os }}-
 
@@ -30,6 +30,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
+          projectPath: "Action Test"
           unityVersion: auto
           targetPlatform: StandaloneWindows64
           buildName: CI-Windows
@@ -39,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: WindowsBuild
-          path: build/StandaloneWindows64
+          path: "Action Test/build/StandaloneWindows64"
